@@ -13,7 +13,7 @@
     "react-native-safe-area-context": "~5.7.0"
   },
   "scripts": {
-    "start": "expo start --dev-client",
+    "start": "expo start --go",
     "start:dev-client": "expo start --dev-client",
     "start:expo-go": "expo start --go",
     "android": "expo start --android --dev-client",
