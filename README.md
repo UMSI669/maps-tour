@@ -23,7 +23,7 @@ This uses Map APIs built into the device that browsers on your laptop do not hav
 
 ### iOS students
 
-Run `npm run ios` to start the project in Expo Go. iOS uses Apple Maps by default, so no Google Maps key is required.
+Run `npm start` and press `i`, or run `npm run ios`, to start the project in Expo Go. Stop any Metro server already running in development-build mode before starting again. iOS uses Apple Maps by default, so no Google Maps key is required.
 
 ### Android students
 

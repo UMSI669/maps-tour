@@ -11,6 +11,7 @@ test('project scripts provide report-only progress and infrastructure checks', (
   expect(packageJson.scripts['check-progress:report']).toBeDefined();
   expect(packageJson.scripts['test:infrastructure']).toBeDefined();
   expect(packageJson.scripts['android:build']).toBe('expo run:android');
+  expect(packageJson.scripts.start).toBe('expo start --go');
   expect(packageJson.scripts['start:dev-client']).toBe('expo start --dev-client');
   expect(packageJson.scripts['start:expo-go']).toBe('expo start --go');
   expect(packageJson.scripts.verify).toContain('check-progress');
