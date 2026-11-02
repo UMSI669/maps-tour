@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   ActivityIndicator,
   Platform,
@@ -9,11 +9,11 @@ import {
   Text,
   TextInput,
   View,
-} from 'react-native';
-import MapView, { Marker, Polygon, Polyline } from 'react-native-maps';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { PLACES, ROUTE, TOUR_BOUNDARY } from './src/data/places';
-import { getCurrentCoordinates } from './src/services/locationService';
+} from "react-native";
+import MapView, { Marker, Polygon, Polyline } from "react-native-maps";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { PLACES, ROUTE, TOUR_BOUNDARY } from "./src/data/places";
+import { getCurrentCoordinates } from "./src/services/locationService";
 
 // ======================================================
 // PART 1 — SHOW A MAP
@@ -45,58 +45,82 @@ const INITIAL_REGION = {
 
 export default function App() {
   const mapRef = React.useRef<MapView>(null);
-  const [selectedPlaceId, setSelectedPlaceId] = React.useState<string | null>(null);
-  const [mapPin, setMapPin] = React.useState<{ latitude: number; longitude: number } | null>(null);
-  const [searchText, setSearchText] = React.useState('');
-  const [location, setLocation] = React.useState<{ latitude: number; longitude: number } | null>(null);
-  const [locationMessage, setLocationMessage] = React.useState('');
+  const [selectedPlaceId, setSelectedPlaceId] = React.useState<string | null>(
+    null,
+  );
+  const [mapPin, setMapPin] = React.useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+  const [searchText, setSearchText] = React.useState("");
+  const [location, setLocation] = React.useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+  const [locationMessage, setLocationMessage] = React.useState("");
   const [locationLoading, setLocationLoading] = React.useState(false);
-  const [cameraMessage, setCameraMessage] = React.useState('');
+  const [cameraMessage, setCameraMessage] = React.useState("");
 
-  const selectedPlace = PLACES.find(place => place.id === selectedPlaceId) ?? null;
-  const visiblePlaces = PLACES.filter(place =>
-    `${place.name} ${place.category} ${place.address}`.toLowerCase().includes(searchText.trim().toLowerCase()),
+  const selectedPlace =
+    PLACES.find((place) => place.id === selectedPlaceId) ?? null;
+  const visiblePlaces = PLACES.filter((place) =>
+    `${place.name} ${place.category} ${place.address}`
+      .toLowerCase()
+      .includes(searchText.trim().toLowerCase()),
   );
 
   function focusPlace(place: (typeof PLACES)[number]) {
     setSelectedPlaceId(place.id);
     if (LESSONS.camera) {
-      mapRef.current?.animateToRegion({
-        latitude: place.coordinate.latitude,
-        longitude: place.coordinate.longitude,
-        latitudeDelta: 0.012,
-        longitudeDelta: 0.012,
-      }, 450);
+      mapRef.current?.animateToRegion(
+        {
+          latitude: place.coordinate.latitude,
+          longitude: place.coordinate.longitude,
+          latitudeDelta: 0.012,
+          longitudeDelta: 0.012,
+        },
+        450,
+      );
       setCameraMessage(`Focused on ${place.name}`);
     }
   }
 
   function fitAllPlaces() {
-    mapRef.current?.fitToCoordinates(PLACES.map(place => place.coordinate), {
-      edgePadding: { top: 48, right: 48, bottom: 48, left: 48 },
-      animated: true,
-    });
+    mapRef.current?.fitToCoordinates(
+      PLACES.map((place) => place.coordinate),
+      {
+        edgePadding: { top: 48, right: 48, bottom: 48, left: 48 },
+        animated: true,
+      },
+    );
     setCameraMessage(`Showing all ${PLACES.length} places`);
   }
 
   async function showMyLocation() {
     setLocationLoading(true);
-    setLocationMessage('');
+    setLocationMessage("");
     try {
       const result = await getCurrentCoordinates();
-      if (result.status === 'denied') {
-        setLocationMessage('Location permission was not granted. You can still explore the map.');
+      if (result.status === "denied") {
+        setLocationMessage(
+          "Location permission was not granted. You can still explore the map.",
+        );
         return;
       }
       setLocation(result.coordinate);
-      setLocationMessage('Your current location is ready.');
-      mapRef.current?.animateToRegion({
-        ...result.coordinate,
-        latitudeDelta: 0.012,
-        longitudeDelta: 0.012,
-      }, 450);
+      setLocationMessage("Your current location is ready.");
+      mapRef.current?.animateToRegion(
+        {
+          ...result.coordinate,
+          latitudeDelta: 0.012,
+          longitudeDelta: 0.012,
+        },
+        450,
+      );
     } catch {
-      setLocationMessage('We could not read your location. Try again when location services are available.');
+      setLocationMessage(
+        "We could not read your location. Try again when location services are available.",
+      );
     } finally {
       setLocationLoading(false);
     }
@@ -106,11 +130,15 @@ export default function App() {
     <SafeAreaProvider>
       <SafeAreaView style={styles.safeArea}>
         <StatusBar barStyle="dark-content" />
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+        <ScrollView
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
+        >
           <Text style={styles.eyebrow}>EXPO + REACT NATIVE</Text>
           <Text style={styles.title}>City Explorer</Text>
           <Text style={styles.subtitle}>
-            Explore a few favorite spots in Ann Arbor. Turn on each map feature as you work through the tour.
+            Explore a few favorite spots in Ann Arbor. Turn on each map feature
+            as you work through the tour.
           </Text>
 
           {LESSONS.search ? (
@@ -125,36 +153,56 @@ export default function App() {
           ) : null}
 
           <View style={styles.mapFrame}>
-            {LESSONS.map && Platform.OS !== 'web' ? (
+            {LESSONS.map && Platform.OS !== "web" ? (
               <MapView
                 ref={LESSONS.camera ? mapRef : undefined}
                 initialRegion={INITIAL_REGION}
-                onPress={LESSONS.mapTap ? event => {
-                  setMapPin(event.nativeEvent.coordinate);
-                  setSelectedPlaceId(null);
-                } : undefined}
+                onPress={
+                  LESSONS.mapTap
+                    ? (event) => {
+                        setMapPin(event.nativeEvent.coordinate);
+                        setSelectedPlaceId(null);
+                      }
+                    : undefined
+                }
                 showsUserLocation={LESSONS.location && location !== null}
                 style={styles.map}
                 testID="city-map"
               >
-                {LESSONS.markers ? visiblePlaces.map(place => (
-                  <Marker
-                    coordinate={place.coordinate}
-                    key={place.id}
-                    onPress={() => LESSONS.selection && setSelectedPlaceId(place.id)}
-                    accessibilityLabel={place.name}
-                    pinColor={selectedPlaceId === place.id ? '#e85c45' : '#315e56'}
-                    testID={`place-marker-${place.id}`}
-                    title={place.name}
-                    description={place.category}
-                  />
-                )) : null}
+                {LESSONS.markers
+                  ? visiblePlaces.map((place) => (
+                      <Marker
+                        coordinate={place.coordinate}
+                        key={place.id}
+                        onPress={() =>
+                          LESSONS.selection && setSelectedPlaceId(place.id)
+                        }
+                        accessibilityLabel={place.name}
+                        pinColor={
+                          selectedPlaceId === place.id ? "#e85c45" : "#315e56"
+                        }
+                        testID={`place-marker-${place.id}`}
+                        title={place.name}
+                        description={place.category}
+                      />
+                    ))
+                  : null}
                 {LESSONS.mapTap && mapPin ? (
-                  <Marker coordinate={mapPin} pinColor="#e85c45" testID="dropped-pin" title="Dropped pin" />
+                  <Marker
+                    coordinate={mapPin}
+                    pinColor="#e85c45"
+                    testID="dropped-pin"
+                    title="Dropped pin"
+                  />
                 ) : null}
                 {LESSONS.overlays ? (
                   <>
-                    <Polyline coordinates={ROUTE} strokeColor="#e85c45" strokeWidth={5} testID="city-route" />
+                    <Polyline
+                      coordinates={ROUTE}
+                      strokeColor="#e85c45"
+                      strokeWidth={5}
+                      testID="city-route"
+                    />
                     <Polygon
                       coordinates={TOUR_BOUNDARY}
                       fillColor="rgba(49, 94, 86, 0.16)"
@@ -166,52 +214,95 @@ export default function App() {
                 ) : null}
               </MapView>
             ) : (
-              <View accessibilityLabel="Map preview" style={styles.mapPlaceholder}>
+              <View
+                accessibilityLabel="Map preview"
+                style={styles.mapPlaceholder}
+              >
                 <View style={styles.mapGrid} />
-                <View style={styles.previewPin}><Text style={styles.previewPinText}>AA</Text></View>
+                <View style={styles.previewPin}>
+                  <Text style={styles.previewPinText}>AA</Text>
+                </View>
                 <Text style={styles.previewTitle}>Ann Arbor, Michigan</Text>
-                <Text style={styles.previewCaption}>Enable Part 1 to explore the interactive map.</Text>
+                <Text style={styles.previewCaption}>
+                  Enable Part 1 to explore the interactive map.
+                </Text>
               </View>
             )}
           </View>
 
           {LESSONS.camera ? (
             <View style={styles.controlRow}>
-              <Pressable accessibilityRole="button" onPress={fitAllPlaces} style={styles.secondaryButton}>
+              <Pressable
+                accessibilityRole="button"
+                onPress={fitAllPlaces}
+                style={styles.secondaryButton}
+              >
                 <Text style={styles.secondaryButtonText}>Fit all places</Text>
               </Pressable>
               {LESSONS.location ? (
-                <Pressable accessibilityRole="button" disabled={locationLoading} onPress={showMyLocation} style={styles.primaryButton}>
-                  {locationLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryButtonText}>My location</Text>}
+                <Pressable
+                  accessibilityRole="button"
+                  disabled={locationLoading}
+                  onPress={showMyLocation}
+                  style={styles.primaryButton}
+                >
+                  {locationLoading ? (
+                    <ActivityIndicator color="#fff" />
+                  ) : (
+                    <Text style={styles.primaryButtonText}>My location</Text>
+                  )}
                 </Pressable>
               ) : null}
             </View>
           ) : null}
-          {cameraMessage ? <Text accessibilityLiveRegion="polite" style={styles.status}>{cameraMessage}</Text> : null}
-          {locationMessage ? <Text accessibilityLiveRegion="polite" style={styles.status}>{locationMessage}</Text> : null}
+          {cameraMessage ? (
+            <Text accessibilityLiveRegion="polite" style={styles.status}>
+              {cameraMessage}
+            </Text>
+          ) : null}
+          {locationMessage ? (
+            <Text accessibilityLiveRegion="polite" style={styles.status}>
+              {locationMessage}
+            </Text>
+          ) : null}
           {location ? (
             <Text style={styles.coordinates}>
-              Current position: {location.latitude.toFixed(4)}, {location.longitude.toFixed(4)}
+              Current position: {location.latitude.toFixed(4)},{" "}
+              {location.longitude.toFixed(4)}
             </Text>
           ) : null}
 
           {LESSONS.selection && selectedPlace ? (
-            <View accessibilityLabel="Selected place" style={styles.selectedCard} testID="selected-place-card">
+            <View
+              accessibilityLabel="Selected place"
+              style={styles.selectedCard}
+              testID="selected-place-card"
+            >
               <View style={styles.selectedCardCopy}>
-                <Text style={styles.cardEyebrow}>SELECTED PLACE · {selectedPlace.category.toUpperCase()}</Text>
+                <Text style={styles.cardEyebrow}>
+                  SELECTED PLACE · {selectedPlace.category.toUpperCase()}
+                </Text>
                 <Text style={styles.selectedTitle}>{selectedPlace.name}</Text>
                 <Text style={styles.cardCopy}>{selectedPlace.address}</Text>
                 <Text style={styles.cardCopy}>{selectedPlace.description}</Text>
               </View>
-              <Pressable accessibilityRole="button" onPress={() => setSelectedPlaceId(null)}>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => setSelectedPlaceId(null)}
+              >
                 <Text style={styles.dismissText}>Close</Text>
               </Pressable>
             </View>
           ) : null}
 
           {LESSONS.mapTap && mapPin ? (
-            <Text accessibilityLiveRegion="polite" style={styles.status} testID="dropped-pin-coordinate">
-              Dropped pin: {mapPin.latitude.toFixed(4)}, {mapPin.longitude.toFixed(4)}
+            <Text
+              accessibilityLiveRegion="polite"
+              style={styles.status}
+              testID="dropped-pin-coordinate"
+            >
+              Dropped pin: {mapPin.latitude.toFixed(4)},{" "}
+              {mapPin.longitude.toFixed(4)}
             </Text>
           ) : null}
 
@@ -221,39 +312,63 @@ export default function App() {
               <Text style={styles.sectionTitle}>Places to explore</Text>
             </View>
             <Text style={styles.placeCount}>
-              {visiblePlaces.length} {visiblePlaces.length === 1 ? 'place' : 'places'}
+              {visiblePlaces.length}{" "}
+              {visiblePlaces.length === 1 ? "place" : "places"}
             </Text>
           </View>
 
-          {visiblePlaces.length > 0 ? visiblePlaces.map(place => (
-            <Pressable
-              accessibilityRole={LESSONS.search ? 'button' : undefined}
-              accessibilityState={LESSONS.selection ? { selected: selectedPlaceId === place.id } : undefined}
-              disabled={!LESSONS.search && !LESSONS.selection}
-              key={place.id}
-              onPress={() => focusPlace(place)}
-              style={[styles.placeCard, LESSONS.selection && selectedPlaceId === place.id ? styles.placeCardSelected : null]}
-              testID={`place-card-${place.id}`}
-            >
-              <View style={styles.placeIcon}><Text style={styles.placeIconText}>{place.category.slice(0, 1)}</Text></View>
-              <View style={styles.placeCopy}>
-                <Text style={styles.placeName}>{place.name}</Text>
-                <Text style={styles.cardCopy}>{place.category} · {place.address}</Text>
-              </View>
-              {LESSONS.search ? <Text style={styles.arrow}>›</Text> : null}
-            </Pressable>
-          )) : (
-            <Text style={styles.emptyState}>No places match “{searchText}”. Try another search.</Text>
+          {visiblePlaces.length > 0 ? (
+            visiblePlaces.map((place) => (
+              <Pressable
+                accessibilityRole={LESSONS.search ? "button" : undefined}
+                accessibilityState={
+                  LESSONS.selection
+                    ? { selected: selectedPlaceId === place.id }
+                    : undefined
+                }
+                disabled={!LESSONS.search && !LESSONS.selection}
+                key={place.id}
+                onPress={() => focusPlace(place)}
+                style={[
+                  styles.placeCard,
+                  LESSONS.selection && selectedPlaceId === place.id
+                    ? styles.placeCardSelected
+                    : null,
+                ]}
+                testID={`place-card-${place.id}`}
+              >
+                <View style={styles.placeIcon}>
+                  <Text style={styles.placeIconText}>
+                    {place.category.slice(0, 1)}
+                  </Text>
+                </View>
+                <View style={styles.placeCopy}>
+                  <Text style={styles.placeName}>{place.name}</Text>
+                  <Text style={styles.cardCopy}>
+                    {place.category} · {place.address}
+                  </Text>
+                </View>
+                {LESSONS.search ? <Text style={styles.arrow}>›</Text> : null}
+              </Pressable>
+            ))
+          ) : (
+            <Text style={styles.emptyState}>
+              No places match “{searchText}”. Try another search.
+            </Text>
           )}
 
           <View style={styles.tourNote}>
             <Text style={styles.tourNoteTitle}>Follow the code tour</Text>
             <Text style={styles.tourNoteCopy}>
-              Search App.tsx for PART 1 through PART 8. Each part explains why the feature matters, what to enable, and how to verify it.
+              Search App.tsx for PART 1 through PART 8. Each part explains why
+              the feature matters, what to enable, and how to verify it.
             </Text>
           </View>
-          {Platform.OS === 'web' ? (
-            <Text style={styles.webNote}>The native map lessons are designed for iOS and Android in Expo Go.</Text>
+          {Platform.OS === "web" ? (
+            <Text style={styles.webNote}>
+              The native map lessons are designed for iOS and Android in Expo
+              Go.
+            </Text>
           ) : null}
         </ScrollView>
       </SafeAreaView>
@@ -333,47 +448,190 @@ export default function App() {
 // ======================================================
 
 const styles = StyleSheet.create({
-  safeArea: { backgroundColor: '#f6f7f4', flex: 1 },
+  safeArea: { backgroundColor: "#f6f7f4", flex: 1 },
   content: { gap: 14, padding: 18, paddingBottom: 36, paddingTop: 12 },
-  eyebrow: { color: '#52746b', fontSize: 11, fontWeight: '800', letterSpacing: 1.4 },
-  title: { color: '#192b28', fontSize: 31, fontWeight: '800', letterSpacing: -0.5 },
-  subtitle: { color: '#61716d', fontSize: 14, lineHeight: 21, marginTop: -7 },
-  searchInput: { backgroundColor: '#fff', borderColor: '#dde4df', borderRadius: 12, borderWidth: 1, color: '#192b28', minHeight: 48, paddingHorizontal: 14 },
-  mapFrame: { backgroundColor: '#e9eeea', borderRadius: 18, height: 330, overflow: 'hidden' },
+  eyebrow: {
+    color: "#52746b",
+    fontSize: 11,
+    fontWeight: "800",
+    letterSpacing: 1.4,
+  },
+  title: {
+    color: "#192b28",
+    fontSize: 31,
+    fontWeight: "800",
+    letterSpacing: -0.5,
+  },
+  subtitle: { color: "#61716d", fontSize: 14, lineHeight: 21, marginTop: -7 },
+  searchInput: {
+    backgroundColor: "#fff",
+    borderColor: "#dde4df",
+    borderRadius: 12,
+    borderWidth: 1,
+    color: "#192b28",
+    minHeight: 48,
+    paddingHorizontal: 14,
+  },
+  mapFrame: {
+    backgroundColor: "#e9eeea",
+    borderRadius: 18,
+    height: 330,
+    overflow: "hidden",
+  },
   map: { flex: 1 },
-  mapPlaceholder: { alignItems: 'center', backgroundColor: '#e6ece7', flex: 1, justifyContent: 'center', overflow: 'hidden' },
-  mapGrid: { ...StyleSheet.absoluteFill, backgroundColor: '#e6ece7', borderColor: '#d6e0d8', borderLeftWidth: 1, borderRightWidth: 1, borderStyle: 'dashed', transform: [{ rotate: '12deg' }], width: '80%' },
-  previewPin: { alignItems: 'center', backgroundColor: '#315e56', borderColor: '#fff', borderRadius: 22, borderWidth: 3, height: 48, justifyContent: 'center', marginBottom: 12, shadowColor: '#20332e', shadowOpacity: 0.2, shadowRadius: 6, width: 48 },
-  previewPinText: { color: '#fff', fontSize: 13, fontWeight: '800' },
-  previewTitle: { color: '#20332e', fontSize: 17, fontWeight: '700' },
-  previewCaption: { color: '#61716d', fontSize: 12, marginTop: 5 },
-  controlRow: { flexDirection: 'row', gap: 9 },
-  primaryButton: { alignItems: 'center', backgroundColor: '#315e56', borderRadius: 11, justifyContent: 'center', minHeight: 44, minWidth: 110, paddingHorizontal: 14 },
-  primaryButtonText: { color: '#fff', fontSize: 13, fontWeight: '700' },
-  secondaryButton: { alignItems: 'center', backgroundColor: '#fff', borderColor: '#cad7d0', borderRadius: 11, borderWidth: 1, justifyContent: 'center', minHeight: 44, paddingHorizontal: 14 },
-  secondaryButtonText: { color: '#315e56', fontSize: 13, fontWeight: '700' },
-  status: { color: '#315e56', fontSize: 13, lineHeight: 19 },
-  coordinates: { color: '#61716d', fontSize: 12 },
-  selectedCard: { alignItems: 'flex-start', backgroundColor: '#fff', borderColor: '#cad7d0', borderRadius: 14, borderWidth: 1, flexDirection: 'row', gap: 10, justifyContent: 'space-between', padding: 14 },
+  mapPlaceholder: {
+    alignItems: "center",
+    backgroundColor: "#e6ece7",
+    flex: 1,
+    justifyContent: "center",
+    overflow: "hidden",
+  },
+  mapGrid: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: "#e6ece7",
+    borderColor: "#d6e0d8",
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderStyle: "dashed",
+    transform: [{ rotate: "12deg" }],
+    width: "80%",
+  },
+  previewPin: {
+    alignItems: "center",
+    backgroundColor: "#315e56",
+    borderColor: "#fff",
+    borderRadius: 22,
+    borderWidth: 3,
+    height: 48,
+    justifyContent: "center",
+    marginBottom: 12,
+    shadowColor: "#20332e",
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    width: 48,
+  },
+  previewPinText: { color: "#fff", fontSize: 13, fontWeight: "800" },
+  previewTitle: { color: "#20332e", fontSize: 17, fontWeight: "700" },
+  previewCaption: { color: "#61716d", fontSize: 12, marginTop: 5 },
+  controlRow: { flexDirection: "row", gap: 9 },
+  primaryButton: {
+    alignItems: "center",
+    backgroundColor: "#315e56",
+    borderRadius: 11,
+    justifyContent: "center",
+    minHeight: 44,
+    minWidth: 110,
+    paddingHorizontal: 14,
+  },
+  primaryButtonText: { color: "#fff", fontSize: 13, fontWeight: "700" },
+  secondaryButton: {
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderColor: "#cad7d0",
+    borderRadius: 11,
+    borderWidth: 1,
+    justifyContent: "center",
+    minHeight: 44,
+    paddingHorizontal: 14,
+  },
+  secondaryButtonText: { color: "#315e56", fontSize: 13, fontWeight: "700" },
+  status: { color: "#315e56", fontSize: 13, lineHeight: 19 },
+  coordinates: { color: "#61716d", fontSize: 12 },
+  selectedCard: {
+    alignItems: "flex-start",
+    backgroundColor: "#fff",
+    borderColor: "#cad7d0",
+    borderRadius: 14,
+    borderWidth: 1,
+    flexDirection: "row",
+    gap: 10,
+    justifyContent: "space-between",
+    padding: 14,
+  },
   selectedCardCopy: { flex: 1, gap: 5 },
-  cardEyebrow: { color: '#52746b', fontSize: 9, fontWeight: '800', letterSpacing: 1 },
-  selectedTitle: { color: '#192b28', fontSize: 17, fontWeight: '800' },
-  cardCopy: { color: '#697873', fontSize: 12, lineHeight: 17 },
-  dismissText: { color: '#52746b', fontSize: 12, fontWeight: '700', padding: 4 },
-  sectionHeadingRow: { alignItems: 'flex-end', flexDirection: 'row', justifyContent: 'space-between', marginTop: 7 },
-  sectionEyebrow: { color: '#80908a', fontSize: 9, fontWeight: '800', letterSpacing: 1.2 },
-  sectionTitle: { color: '#192b28', fontSize: 20, fontWeight: '800', marginTop: 2 },
-  placeCount: { color: '#80908a', fontSize: 11, paddingBottom: 3 },
-  placeCard: { alignItems: 'center', backgroundColor: '#fff', borderColor: '#edf0ed', borderRadius: 13, borderWidth: 1, flexDirection: 'row', gap: 11, minHeight: 70, padding: 11 },
-  placeCardSelected: { borderColor: '#52746b', borderWidth: 2 },
-  placeIcon: { alignItems: 'center', backgroundColor: '#edf3ef', borderRadius: 11, height: 42, justifyContent: 'center', width: 42 },
-  placeIconText: { color: '#315e56', fontSize: 17, fontWeight: '800' },
+  cardEyebrow: {
+    color: "#52746b",
+    fontSize: 9,
+    fontWeight: "800",
+    letterSpacing: 1,
+  },
+  selectedTitle: { color: "#192b28", fontSize: 17, fontWeight: "800" },
+  cardCopy: { color: "#697873", fontSize: 12, lineHeight: 17 },
+  dismissText: {
+    color: "#52746b",
+    fontSize: 12,
+    fontWeight: "700",
+    padding: 4,
+  },
+  sectionHeadingRow: {
+    alignItems: "flex-end",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 7,
+  },
+  sectionEyebrow: {
+    color: "#80908a",
+    fontSize: 9,
+    fontWeight: "800",
+    letterSpacing: 1.2,
+  },
+  sectionTitle: {
+    color: "#192b28",
+    fontSize: 20,
+    fontWeight: "800",
+    marginTop: 2,
+  },
+  placeCount: { color: "#80908a", fontSize: 11, paddingBottom: 3 },
+  placeCard: {
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderColor: "#edf0ed",
+    borderRadius: 13,
+    borderWidth: 1,
+    flexDirection: "row",
+    gap: 11,
+    minHeight: 70,
+    padding: 11,
+  },
+  placeCardSelected: { borderColor: "#52746b", borderWidth: 2 },
+  placeIcon: {
+    alignItems: "center",
+    backgroundColor: "#edf3ef",
+    borderRadius: 11,
+    height: 42,
+    justifyContent: "center",
+    width: 42,
+  },
+  placeIconText: { color: "#315e56", fontSize: 17, fontWeight: "800" },
   placeCopy: { flex: 1, gap: 3 },
-  placeName: { color: '#263a35', fontSize: 14, fontWeight: '700' },
-  arrow: { color: '#52746b', fontSize: 25, lineHeight: 28, paddingHorizontal: 4 },
-  emptyState: { backgroundColor: '#fff', borderRadius: 12, color: '#697873', fontSize: 13, lineHeight: 19, padding: 14 },
-  tourNote: { backgroundColor: '#eaf0eb', borderRadius: 13, gap: 4, marginTop: 4, padding: 14 },
-  tourNoteTitle: { color: '#315e56', fontSize: 13, fontWeight: '800' },
-  tourNoteCopy: { color: '#61716d', fontSize: 12, lineHeight: 18 },
-  webNote: { color: '#80908a', fontSize: 11, lineHeight: 16, textAlign: 'center' },
+  placeName: { color: "#263a35", fontSize: 14, fontWeight: "700" },
+  arrow: {
+    color: "#52746b",
+    fontSize: 25,
+    lineHeight: 28,
+    paddingHorizontal: 4,
+  },
+  emptyState: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    color: "#697873",
+    fontSize: 13,
+    lineHeight: 19,
+    padding: 14,
+  },
+  tourNote: {
+    backgroundColor: "#eaf0eb",
+    borderRadius: 13,
+    gap: 4,
+    marginTop: 4,
+    padding: 14,
+  },
+  tourNoteTitle: { color: "#315e56", fontSize: 13, fontWeight: "800" },
+  tourNoteCopy: { color: "#61716d", fontSize: 12, lineHeight: 18 },
+  webNote: {
+    color: "#80908a",
+    fontSize: 11,
+    lineHeight: 16,
+    textAlign: "center",
+  },
 });
