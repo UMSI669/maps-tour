@@ -26,14 +26,14 @@ import { getCurrentCoordinates } from './src/services/locationService';
 // ======================================================
 // Turn on one switch at a time. Each feature's complete implementation is ready below.
 const LESSONS = {
-  map: false,
-  markers: false,
-  selection: false,
-  mapTap: false,
-  overlays: false,
-  camera: false,
-  location: false,
-  search: false,
+  map: true,
+  markers: true,
+  selection: true,
+  mapTap: true,
+  overlays: true,
+  camera: true,
+  location: true,
+  search: true,
 };
 
 const INITIAL_REGION = {
